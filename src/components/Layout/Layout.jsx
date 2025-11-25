@@ -17,16 +17,7 @@ export default function Layout({ children }) {
           {children}
           <Footer />
           {/* Transition Screen */}
-          <motion.div
-            initial={{ scaleX: 1 }}
-            animate={{
-              scaleX: 0,
-              transition: { duration: 0.5, ease: "easeOut" },
-            }}
-            exit={{ scaleX: 1, transition: { duration: 0.5, ease: "easeIn" } }}
-            style={{ originX: isPresent ? 0 : 1 }}
-            className="privacy-screen"
-          />
+          
         </ThemeProvider>
       </Fragment>
     </AnimatePresence>

@@ -1,0 +1,345 @@
+diff --git a/package-lock.json b/package-lock.json
+index ab0d642..67c52ac 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -15,16 +15,17 @@
+         "@tsparticles/slim": "^3.7.1",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+         "contentful": "^10.15.0",
+         "file-saver": "^2.0.5",
+         "framer-motion": "^11.3.31",
+         "gsap": "^3.13.0",
+         "lucide-react": "^0.554.0",
++        "motion": "^12.23.24",
+         "next": "^14.2.33",
+         "next-themes": "^0.3.0",
+         "ogl": "^1.0.11",
+         "react": "^18.3.1",
+         "react-announcement": "^1.1.3",
+         "react-cookie": "^7.2.0",
+         "react-dom": "^18.3.1",
+         "react-hook-form": "^7.43.8",
+@@ -4662,16 +4663,84 @@
+       }
+     },
+     "node_modules/mitt": {
+       "version": "1.1.3",
+       "resolved": "https://registry.npmjs.org/mitt/-/mitt-1.1.3.tgz",
+       "integrity": "sha512-mUDCnVNsAi+eD6qA0HkRkwYczbLHJ49z17BGe2PYRhZL4wpZUFZGJHU7/5tmvohoma+Hdn0Vh/oJTiPEmgSruA==",
+       "license": "MIT"
+     },
++    "node_modules/motion": {
++      "version": "12.23.24",
++      "resolved": "https://registry.npmjs.org/motion/-/motion-12.23.24.tgz",
++      "integrity": "sha512-Rc5E7oe2YZ72N//S3QXGzbnXgqNrTESv8KKxABR20q2FLch9gHLo0JLyYo2hZ238bZ9Gx6cWhj9VO0IgwbMjCw==",
++      "license": "MIT",
++      "dependencies": {
++        "framer-motion": "^12.23.24",
++        "tslib": "^2.4.0"
++      },
++      "peerDependencies": {
++        "@emotion/is-prop-valid": "*",
++        "react": "^18.0.0 || ^19.0.0",
++        "react-dom": "^18.0.0 || ^19.0.0"
++      },
++      "peerDependenciesMeta": {
++        "@emotion/is-prop-valid": {
++          "optional": true
++        },
++        "react": {
++          "optional": true
++        },
++        "react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/motion-dom": {
++      "version": "12.23.23",
++      "resolved": "https://registry.npmjs.org/motion-dom/-/motion-dom-12.23.23.tgz",
++      "integrity": "sha512-n5yolOs0TQQBRUFImrRfs/+6X4p3Q4n1dUEqt/H58Vx7OW6RF+foWEgmTVDhIWJIMXOuNNL0apKH2S16en9eiA==",
++      "license": "MIT",
++      "dependencies": {
++        "motion-utils": "^12.23.6"
++      }
++    },
++    "node_modules/motion-utils": {
++      "version": "12.23.6",
++      "resolved": "https://registry.npmjs.org/motion-utils/-/motion-utils-12.23.6.tgz",
++      "integrity": "sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==",
++      "license": "MIT"
++    },
++    "node_modules/motion/node_modules/framer-motion": {
++      "version": "12.23.24",
++      "resolved": "https://registry.npmjs.org/framer-motion/-/framer-motion-12.23.24.tgz",
++      "integrity": "sha512-HMi5HRoRCTou+3fb3h9oTLyJGBxHfW+HnNE25tAXOvVx/IvwMHK0cx7IR4a2ZU6sh3IX1Z+4ts32PcYBOqka8w==",
++      "license": "MIT",
++      "dependencies": {
++        "motion-dom": "^12.23.23",
++        "motion-utils": "^12.23.6",
++        "tslib": "^2.4.0"
++      },
++      "peerDependencies": {
++        "@emotion/is-prop-valid": "*",
++        "react": "^18.0.0 || ^19.0.0",
++        "react-dom": "^18.0.0 || ^19.0.0"
++      },
++      "peerDependenciesMeta": {
++        "@emotion/is-prop-valid": {
++          "optional": true
++        },
++        "react": {
++          "optional": true
++        },
++        "react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/ms": {
+       "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz",
+       "integrity": "sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==",
+       "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/mz": {
+diff --git a/package.json b/package.json
+index 84c76d8..208c450 100644
+--- a/package.json
++++ b/package.json
+@@ -16,16 +16,17 @@
+     "@tsparticles/slim": "^3.7.1",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+     "contentful": "^10.15.0",
+     "file-saver": "^2.0.5",
+     "framer-motion": "^11.3.31",
+     "gsap": "^3.13.0",
+     "lucide-react": "^0.554.0",
++    "motion": "^12.23.24",
+     "next": "^14.2.33",
+     "next-themes": "^0.3.0",
+     "ogl": "^1.0.11",
+     "react": "^18.3.1",
+     "react-announcement": "^1.1.3",
+     "react-cookie": "^7.2.0",
+     "react-dom": "^18.3.1",
+     "react-hook-form": "^7.43.8",
+diff --git a/src/components/Elements/SplashCursor.jsx b/src/components/Elements/SplashCursor.jsx
+index 622a140..ee57801 100644
+--- a/src/components/Elements/SplashCursor.jsx
++++ b/src/components/Elements/SplashCursor.jsx
+@@ -1,25 +1,25 @@
+ 'use client';
+ import { useEffect, useRef } from 'react';
+ 
+ function SplashCursor({
+-  SIM_RESOLUTION = 128,
+-  DYE_RESOLUTION = 1440,
++  SIM_RESOLUTION = 80,
++  DYE_RESOLUTION = 140,
+   CAPTURE_RESOLUTION = 512,
+   DENSITY_DISSIPATION = 3.5,
+-  VELOCITY_DISSIPATION = 2,
++  VELOCITY_DISSIPATION = 3,
+   PRESSURE = 0.1,
+   PRESSURE_ITERATIONS = 20,
+   CURL = 3,
+-  SPLAT_RADIUS = 0.2,
+-  SPLAT_FORCE = 6000,
++  SPLAT_RADIUS = 0.05,
++  SPLAT_FORCE = 400,
+   SHADING = true,
+   COLOR_UPDATE_SPEED = 10,
+-  BACK_COLOR = { r: 0.5, g: 0, b: 0 },
++  BACK_COLOR = { r: 1, g: 1, b: 1 },
+   TRANSPARENT = true
+ }) {
+   const canvasRef = useRef(null);
+ 
+   useEffect(() => {
+     const canvas = canvasRef.current;
+     if (!canvas) return;
+ 
+diff --git a/src/components/Home/Home.jsx b/src/components/Home/Home.jsx
+index 4f60cd7..4a6a6cd 100644
+--- a/src/components/Home/Home.jsx
++++ b/src/components/Home/Home.jsx
+@@ -1,14 +1,23 @@
+ import styles from "styles/Home/Home.module.css";
+ import { Logo2 } from "../Logo/Logo2";
++import FuzzyText from '../Elements/FuzzyText';
++  
++
+ 
+ const Home = () => {
+   return (
+     <section className={styles.home} >
+       <Logo2 />
+-      <h1>SRMIST NCR CHAPTER</h1>
++      <FuzzyText 
++  baseIntensity={0.1} 
++  hoverIntensity={0.2} 
++  enableHover={true}
++>
++ SRMIST NCR CHAPTER
++</FuzzyText>
+       <h2>A Community of SRMIST Students</h2>
+     </section>
+   );
+ };
+ 
+ export default Home;
+diff --git a/src/components/Home/Potw.jsx b/src/components/Home/Potw.jsx
+index 17882a1..81e3395 100644
+--- a/src/components/Home/Potw.jsx
++++ b/src/components/Home/Potw.jsx
+@@ -1,12 +1,12 @@
+ import React from "react";
+ import styles from "styles/Home/Potw.module.css";
+ import { PotwCard } from "./Card";
+-
++import TiltedCard from '../Elements/TiltedCard';
+ import { useEffect, useState } from "react";
+ import { getPotwData } from "../../utils/contentful";
+ import Squares from '../Elements/Squares';
+ 
+ 
+ const Potw = () => {
+   const [potwData, setPotwData] = useState({
+     name: "",
+@@ -19,36 +19,51 @@ const Potw = () => {
+   }, []);
+ 
+   return (
+     <section
+       id="Potw"
+       className={`${styles.potwSection} relative overflow-hidden`}
+     >
+       {/* Sparkles Background */}
+-      <div className="absolute inset-0 w-full h-full">
+-      <Squares 
+-speed={0.5} 
+-squareSize={40}
+-direction='diagonal' // up, down, left, right, diagonal
+-borderColor='#fff'
+-hoverFillColor='#222'
+-/>
++      <div className="absolute inset-0 w-full h-full z-0">
++        <Squares
++          speed={0.5}
++          squareSize={40}
++          direction='diagonal' // up, down, left, right, diagonal
++          borderColor='#fff'
++          hoverFillColor='#222'
++        />
+ 
+       </div>
+-    
+- 
++
++
+ 
+       {/* Content */}
+       <div className={`relative z-10 ${styles.contentWrapper}`}>
+         <h2 className="section-title text-white">Performer of the Week</h2>
+         <div className={styles.container}>
+           <div className={styles.cardWrapper}>
+             <div className={styles.cardBorder}>
+-              <PotwCard  data={potwData} />
++
++              <TiltedCard
++                imageSrc={potwData.img}
++                altText={potwData.name}
++                captionText={`${potwData.name} (${potwData.position})`}
++                containerHeight="300px"
++                containerWidth="100%"
++                imageHeight="300px"
++                imageWidth="300px"
++                scaleOnHover={1.1}
++                rotateAmplitude={14}
++                showMobileWarning={true}
++                showTooltip={true}
++                overlayContent={null}
++                displayOverlayContent={false}
++              />
+             </div>
+           </div>
+         </div>
+       </div>
+     </section>
+   );
+ };
+ 
+diff --git a/src/components/Layout/Layout.jsx b/src/components/Layout/Layout.jsx
+index 6d3d46d..0b486df 100644
+--- a/src/components/Layout/Layout.jsx
++++ b/src/components/Layout/Layout.jsx
+@@ -12,23 +12,14 @@ export default function Layout({ children }) {
+     <AnimatePresence initial={false} mode="wait">
+       {/* Added Transition and theme */}
+       <Fragment key={asPath}>
+         <ThemeProvider>
+           <Navbar />
+           {children}
+           <Footer />
+           {/* Transition Screen */}
+-          <motion.div
+-            initial={{ scaleX: 1 }}
+-            animate={{
+-              scaleX: 0,
+-              transition: { duration: 0.5, ease: "easeOut" },
+-            }}
+-            exit={{ scaleX: 1, transition: { duration: 0.5, ease: "easeIn" } }}
+-            style={{ originX: isPresent ? 0 : 1 }}
+-            className="privacy-screen"
+-          />
++          
+         </ThemeProvider>
+       </Fragment>
+     </AnimatePresence>
+   );
+ }
+diff --git a/src/components/Layout/Navbar/Navbar.jsx b/src/components/Layout/Navbar/Navbar.jsx
+index 8cef218..8c4b2c4 100644
+--- a/src/components/Layout/Navbar/Navbar.jsx
++++ b/src/components/Layout/Navbar/Navbar.jsx
+@@ -78,12 +78,14 @@ const Navbar = () => {
+         <li>
+           <Link href={navLink.href} onClick={openMenu}>
+             {navLink.text}
+           </Link>
+         </li>
+       </ul>
+       <ThemeToogle />
+     </header>
++
++    
+   );
+ };
+ 
+ export default Navbar;
+\ No newline at end of file
+diff --git a/src/components/ui/text-generate-effect.tsx b/src/components/ui/text-generate-effect.tsx
+index 5e235a0..f8c4ea7 100644
+--- a/src/components/ui/text-generate-effect.tsx
++++ b/src/components/ui/text-generate-effect.tsx
+@@ -1,12 +1,16 @@
+ "use client";
+ import { useEffect } from "react";
+ import { motion, stagger, useAnimate } from "framer-motion";
+ import { cn } from "../../utils/cn";
++import { useRef } from 'react';
++import VariableProximity from '../Elements/VariableProximity';
++
++
+ 
+ 
+ export const AnimatedWelcomeText = ({duration}:{duration:0.5}) => {
+   const [scope, animate] = useAnimate();
+ 
+   useEffect(() => {
+     animate(
+       "span",

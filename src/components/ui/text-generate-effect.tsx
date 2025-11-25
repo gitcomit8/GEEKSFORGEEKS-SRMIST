@@ -2,6 +2,10 @@
 import { useEffect } from "react";
 import { motion, stagger, useAnimate } from "framer-motion";
 import { cn } from "../../utils/cn";
+import { useRef } from 'react';
+import VariableProximity from '../Elements/VariableProximity';
+
+
 
 
 export const AnimatedWelcomeText = ({duration}:{duration:0.5}) => {

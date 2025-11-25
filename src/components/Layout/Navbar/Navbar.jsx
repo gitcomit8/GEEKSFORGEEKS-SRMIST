@@ -83,6 +83,8 @@ const Navbar = () => {
       </ul>
       <ThemeToogle />
     </header>
+
+    
   );
 };
 
