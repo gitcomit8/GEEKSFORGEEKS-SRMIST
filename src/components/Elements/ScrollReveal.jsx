@@ -21,6 +21,7 @@ gsap.registerPlugin(ScrollTrigger);
  * @param {string} [props.rotationEnd='bottom bottom']
  * @param {string} [props.wordAnimationEnd='bottom bottom']
  * @param {'premium' | 'elegant' | 'dynamic'} [props.animationStyle='premium']
+ * @param {string} [props.animationStart='top bottom']
  */
 const ScrollReveal = ({
     children,
@@ -37,7 +38,8 @@ const ScrollReveal = ({
     textClassName = '',
     rotationEnd = 'bottom bottom',
     wordAnimationEnd = 'bottom bottom',
-    animationStyle = 'premium' // 'premium', 'elegant', 'dynamic'
+    animationStyle = 'premium', // 'premium', 'elegant', 'dynamic'
+    animationStart = 'top bottom'
 }) => {
     const containerRef = useRef(null);
 
@@ -88,7 +90,7 @@ const ScrollReveal = ({
                 scrollTrigger: {
                     trigger: el,
                     scroller,
-                    start: 'top bottom',
+                    start: animationStart,
                     end: rotationEnd,
                     scrub: 1.5
                 }
@@ -117,7 +119,7 @@ const ScrollReveal = ({
                     scrollTrigger: {
                         trigger: el,
                         scroller,
-                        start: 'top bottom-=15%',
+                        start: animationStart,
                         end: wordAnimationEnd,
                         scrub: 1.2
                     }
@@ -140,7 +142,7 @@ const ScrollReveal = ({
                         scrollTrigger: {
                             trigger: el,
                             scroller,
-                            start: 'top bottom-=15%',
+                            start: animationStart,
                             end: wordAnimationEnd,
                             scrub: 1.2
                         }
@@ -162,7 +164,7 @@ const ScrollReveal = ({
                     scrollTrigger: {
                         trigger: el,
                         scroller,
-                        start: 'top bottom-=10%',
+                        start: animationStart,
                         end: wordAnimationEnd,
                         scrub: 1
                     }
@@ -187,7 +189,7 @@ const ScrollReveal = ({
                     scrollTrigger: {
                         trigger: el,
                         scroller,
-                        start: 'top bottom-=20%',
+                        start: animationStart,
                         end: wordAnimationEnd,
                         scrub: 1
                     }
@@ -214,7 +216,7 @@ const ScrollReveal = ({
                     scrollTrigger: {
                         trigger: el,
                         scroller,
-                        start: 'top bottom-=20%',
+                        start: animationStart,
                         end: wordAnimationEnd,
                         scrub: 0.8
                     }
