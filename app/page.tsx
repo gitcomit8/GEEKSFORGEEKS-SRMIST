@@ -21,14 +21,14 @@ export default function Home() {
   ];
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+    <div className="relative w-full h-screen overflow-hidden">
       {/* Glassy Navbar */}
       <GlassyNavbar />
 
       {/* GridScan Background */}
       <GridScan
-        className="w-full h-full"
-        style={{ width: '100%', height: '100vh', position: 'absolute', top: 0, left: 0 }}
+        className="w-full h-full absolute top-0 left-0"
+        style={{}}
         sensitivity={0.55}
         lineThickness={1}
         linesColor="#ffffff"
@@ -42,36 +42,16 @@ export default function Home() {
       />
 
       {/* Center Content */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 10,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '40px'
-      }}>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-10 w-full px-4">
         {/* GeeksForGeeks Logo - positioned higher */}
-        <div style={{
-          width: '700px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: '-80px'
-        }}>
+        <div className="w-full max-w-[700px] flex justify-center items-center -mt-20 sm:-mt-24">
           <Logo2 />
         </div>
 
         {/* SRMIST Text - below the logo */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
+        <div className="flex justify-center items-center text-center">
           <FuzzyText
-            fontSize="3rem"
+            fontSize="clamp(1.5rem, 5vw, 3rem)"
             baseIntensity={0.1}
             hoverIntensity={0.2}
             enableHover={true}
@@ -84,13 +64,7 @@ export default function Home() {
       </div>
 
       {/* Social Media Logo Loop - Bottom */}
-      <div style={{
-        position: 'absolute',
-        bottom: '60px',
-        left: '0',
-        width: '100%',
-        zIndex: 20
-      }}>
+      <div className="absolute bottom-[60px] left-0 w-full z-20">
         <LogoLoop
           logos={socialLogos}
           speed={50}
@@ -106,16 +80,7 @@ export default function Home() {
       </div>
 
       {/* Copyright Footer */}
-      <div style={{
-        position: 'absolute',
-        bottom: '10px',
-        width: '100%',
-        textAlign: 'center',
-        zIndex: 20,
-        color: 'rgba(255, 255, 255, 0.6)',
-        fontSize: '12px',
-        fontFamily: 'var(--font-geist-sans), sans-serif'
-      }}>
+      <div className="absolute bottom-[10px] w-full text-center z-20 text-white/60 text-xs font-sans px-4">
         <p>&#9426; Copyrights 2026 by GFG SRMIST DELHI NCR. All Rights Reserved.</p>
       </div>
     </div>

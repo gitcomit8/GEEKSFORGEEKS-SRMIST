@@ -3,9 +3,11 @@ import { Logo } from "../logo/logo";
 import Link from "next/link";
 import { useState } from "react";
 import DecryptedText from "./DecryptedText";
+import { FiMenu, FiX } from "react-icons/fi";
 
 export default function GlassyNavbar() {
     const [hoveredIndex, setHoveredIndex] = useState(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navItems = [
         { label: 'About', href: '/pages/about' },
@@ -15,101 +17,76 @@ export default function GlassyNavbar() {
     ];
 
     return (
-        <nav style={{
-            position: 'fixed',
-            top: '30px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '85%',
-            maxWidth: '1100px',
-            height: '70px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            backdropFilter: 'blur(25px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(25px) saturate(180%)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: '40px',
-            boxShadow: `
-        0 20px 40px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-        inset 0 0 20px rgba(255, 255, 255, 0.02)
-      `,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 40px',
-            zIndex: 1000
-        }}>
-            {/* Left side - Logo */}
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                flex: '0 0 auto',
-                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
-            }}>
-                <Logo />
-            </div>
+        <>
+            <nav className="fixed top-[30px] left-1/2 -translate-x-1/2 w-[85%] max-w-[1100px] h-[70px] bg-white/5 backdrop-blur-[25px] saturate-[180%] border border-white/15 rounded-[40px] shadow-[0_20px_40px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.2),inset_0_0_20px_rgba(255,255,255,0.02)] flex items-center justify-between px-6 md:px-10 z-[1000]">
+                {/* Left side - Logo */}
+                <div className="flex items-center flex-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+                    <Logo />
+                </div>
 
-            {/* Center - Navigation Links */}
-            <div style={{
-                display: 'flex',
-                gap: '12px',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: '1'
-            }}>
-                {navItems.map((item, index) => (
-                    <Link
-                        key={index}
-                        href={item.href}
-                        onMouseEnter={() => setHoveredIndex(index)}
-                        onMouseLeave={() => setHoveredIndex(null)}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '10px 28px',
-                            fontSize: '18px',
-                            fontFamily: 'var(--font-roboto-slab), serif',
-                            fontWeight: '500',
-                            color: 'white',
-                            textDecoration: 'none',
-                            borderRadius: '30px',
-                            transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
-                            background: hoveredIndex === index
-                                ? '#2f8d46'
-                                : 'transparent',
-                            backdropFilter: hoveredIndex === index ? 'blur(10px)' : 'none',
-                            border: hoveredIndex === index
-                                ? '1px solid #2f8d46'
-                                : '1px solid transparent',
-                            transform: hoveredIndex === index ? 'scale(1.05)' : 'scale(1)',
-                            boxShadow: hoveredIndex === index
-                                ? '0 8px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                                : 'none',
-                            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                        }}
+                {/* Center - Navigation Links (Desktop) */}
+                <div className="hidden md:flex gap-3 items-center justify-center flex-1">
+                    {navItems.map((item, index) => (
+                        <Link
+                            key={index}
+                            href={item.href}
+                            onMouseEnter={() => setHoveredIndex(index)}
+                            onMouseLeave={() => setHoveredIndex(null)}
+                            className={`
+                                flex items-center justify-center px-7 py-2.5 text-lg font-roboto-slab font-medium text-white no-underline rounded-[30px] transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)]
+                                ${hoveredIndex === index
+                                    ? 'bg-[#2f8d46] border border-[#2f8d46] scale-105 shadow-[0_8px_20px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] backdrop-blur-[10px]'
+                                    : 'bg-transparent border border-transparent scale-100 shadow-none'}
+                            `}
+                            style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
+                        >
+                            <DecryptedText
+                                text={item.label}
+                                animate={hoveredIndex === index}
+                                animateOn="hover"
+                                revealDirection="center"
+                                speed={40}
+                                maxIterations={15}
+                                characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+"
+                                className="revealed"
+                                parentClassName="all-letters"
+                                encryptedClassName="encrypted"
+                            />
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Right side - Empty for balance on desktop */}
+                <div className="hidden md:block flex-none w-[60px]" />
+
+                {/* Mobile Menu Button */}
+                <div className="md:hidden flex items-center">
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="text-white p-2 focus:outline-none"
                     >
-                        <DecryptedText
-                            text={item.label}
-                            animate={hoveredIndex === index}
-                            animateOn="hover"
-                            revealDirection="center"
-                            speed={40}
-                            maxIterations={15}
-                            characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+"
-                            className="revealed"
-                            parentClassName="all-letters"
-                            encryptedClassName="encrypted"
-                        />
-                    </Link>
-                ))}
-            </div>
+                        {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+                    </button>
+                </div>
+            </nav>
 
-            {/* Right side - Empty for balance */}
-            <div style={{
-                flex: '0 0 auto',
-                width: '60px'
-            }} />
-        </nav >
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-[999] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center md:hidden">
+                    <div className="flex flex-col gap-6 items-center">
+                        {navItems.map((item, index) => (
+                            <Link
+                                key={index}
+                                href={item.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-2xl font-roboto-slab font-medium text-white hover:text-[#2f8d46] transition-colors"
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
