@@ -1,5 +1,6 @@
 "use client";
 import GlassyNavbar from '../../components/GlassyNavbar';
+import DotGrid from '../../components/DotGrid';
 
 export default function ChallengesPage() {
     const challenges = [
@@ -9,12 +10,21 @@ export default function ChallengesPage() {
     ];
 
     return (
-        <div style={{
-            width: '100%',
-            minHeight: '100vh',
-            background: 'linear-gradient(135deg, #141e30 0%, #243b55 50%, #141e30 100%)',
-            position: 'relative'
-        }}>
+        <div style={{ width: '100%', minHeight: '100vh', position: 'relative' }}>
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
+                <DotGrid
+                    dotSize={3}
+                    gap={15}
+                    baseColor="#073b0d"
+                    activeColor="#128224"
+                    proximity={120}
+                    shockRadius={250}
+                    shockStrength={5}
+                    resistance={750}
+                    returnDuration={1.5}
+                />
+            </div>
+ <div style={{ position: 'relative', zIndex: 1 }}>
             <GlassyNavbar />
 
             <div style={{
@@ -86,7 +96,7 @@ export default function ChallengesPage() {
                         </div>
                     ))}
                 </div>
-            </div>
+            </div></div>
         </div>
     );
 }
