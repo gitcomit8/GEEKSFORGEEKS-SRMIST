@@ -1,79 +1,36 @@
-<h1 align="center">GEEKSFORGEEKS-SRMIST-NCR Campus Body Website </h1>
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-<h3 align="center"> An Open Source Website for GEEKSFORGEEKS SRM Campus Body built using NextJS. </h3>
+## Getting Started
 
-<h1 align="center">HacktoberFest Accepted</h1>
-<h2 align="center">
-<a href="https://www.srmist-ncr-gfg.club/" target="_blank">Visit Our Website💻</a>
-</h2>
-
-<h2 align="center"> Contribution Guidelines 🏗 </h2>
-
-Do you seem to notice any of your favorite features that we are missing? If yes, do you think you can add it and make it a beautiful experience for all? 
-
-We are excited to invite you to contribute to this project and make it better.
-
-If you wish to contribute, we highly recommend following the guidelines mentioned below. 
-
-**1.**  Fork [this](https://github.com/GEEKSFORGEEKS-SRMIST-NCR/GEEKSFORGEEKS-SRMIST-NCR.github.io) repository.
-
-**2.**  Clone your forked copy of the project.
+First, run the development server:
 
 ```bash
-   git clone https://github.com/your_username/GEEKSFORGEEKS-SRMIST-NCR.github.io.git
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-**3.** Navigate to the project directory.
-```
-   cd GEEKSFORGEEKS-SRMIST-NCR.github.io
-```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-**4.** Create a new branch:
-```
-   git checkout -b YourBranchName
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-**5.** Make changes in source code.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-**6.** Stage your changes and commit
+## Learn More
 
-```
-   git add .
-   git commit -m "<your_commit_message>"
-```
+To learn more about Next.js, take a look at the following resources:
 
-**7.** Push your local commits to the remote repo.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-```
-   git push origin YourBranchName
-```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-**8.** Create a [PR](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
+## Deploy on Vercel
 
-**Note:** If anyone contributes to this repository, the changes will not be reflected in your local repository. For that:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-**9.** Setup a reference(remote) to the original repository to get all the changes from the remote.
-```
-   git remote add upstream  https://github.com/GEEKSFORGEEKS-SRMIST-NCR/GEEKSFORGEEKS-SRMIST-NCR.github.io.git
-```
-
-**10.** Check the remotes for this repository.
-```
-   git remote -v
-```
-
-**11.** Fetching from the remote repository will bring in its branches and their respective commits.
-```
-   git fetch upstream
-```
-
-**12.** Make sure that you're on your master branch.
-```
-   git checkout main
-```
-
-**13.** Now that you have fetched the upstream repository, you can merge its changes into our local branch. This will bring that branch into sync with the upstream, without losing the local changes.
-```
-   git merge upstream/main
-```
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
