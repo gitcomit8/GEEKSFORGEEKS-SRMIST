@@ -294,7 +294,7 @@ export default function TeamPage() {
                                                             initial={{ height: 0, opacity: 0 }}
                                                             animate={{ height: "auto", opacity: 1 }}
                                                             exit={{ height: 0, opacity: 0 }}
-                                                            transition={{ duration: 0.4, ease: "easeInOut" }}
+                                                            transition={{ duration: 0.2, ease: "easeOut" }}
                                                         >
                                                             <div style={{
                                                                 padding: "10px 30px 30px",
@@ -308,8 +308,8 @@ export default function TeamPage() {
                                                                         initial={{ opacity: 0, scale: 0.8, y: 20 }}
                                                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                                                         transition={{
-                                                                            delay: i * 0.04,
-                                                                            duration: 0.4,
+                                                                            delay: i * 0.02,
+                                                                            duration: 0.3,
                                                                             type: "spring",
                                                                             stiffness: 200
                                                                         }}
