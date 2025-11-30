@@ -1,79 +1,127 @@
 "use client";
-import GlassyNavbar from '../../components/GlassyNavbar';
-import Squares from '../../components/Squares';
+import { useState, useEffect } from 'react';
+import { contentfulClient } from '@/lib/contentful';
+import Link from 'next/link';
+import { Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
+import moment from 'moment';
 
 export default function EventsPage() {
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('upcoming');
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await contentfulClient.getEntries({
+                    content_type: 'event',
+                    order: 'fields.date',
+                });
+                setEvents(response.items);
+            } catch (error) {
+                console.error("Error fetching events:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, []);
+
+    const filterEvents = (tab) => {
+        const now = moment();
+        return events.filter(event => {
+            const eventDate = moment(event.fields.date);
+            if (tab === 'current') {
+                return eventDate.isSame(now, 'day');
+            } else if (tab === 'upcoming') {
+                return eventDate.isAfter(now, 'day');
+            } else {
+                return eventDate.isBefore(now, 'day');
+            }
+        });
+    };
+
+    const filteredEvents = filterEvents(activeTab);
+
     return (
-        <div style={{ width: '100%', minHeight: '100vh', position: 'relative' }}>
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
-                <Squares
-                    speed={0.5}
-                    squareSize={40}
-                    direction='diagonal'
-                    borderColor='#333'
-                    hoverFillColor='#222'
-                />
-            </div>
-            <div style={{ position: 'relative', zIndex: 1 }}>
-                <GlassyNavbar />
+        <div className="min-h-screen bg-black text-white p-8 pt-24">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-5xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-[#46b94e] to-emerald-400">
+                    Events
+                </h1>
 
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '100vh',
-                    padding: '140px 40px 40px 40px',
-                    color: 'white'
-                }}>
-                    <h1 style={{
-                        fontSize: '4rem',
-                        fontWeight: 'bold',
-                        marginBottom: '20px',
-                        textAlign: 'center',
-                        color: '#46b94e'
-                    }}>
-                        Events
-                    </h1>
+                {/* Tabs */}
+                <div className="flex gap-4 mb-12 p-1 bg-white/5 rounded-xl w-fit backdrop-blur-sm border border-white/10">
+                    {['upcoming', 'current', 'completed'].map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-6 py-2 rounded-lg capitalize transition-all duration-300 ${activeTab === tab
+                                    ? 'bg-[#46b94e] text-black font-bold shadow-lg shadow-green-500/20'
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                }`}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                </div>
 
-                    <p style={{
-                        fontSize: '1.3rem',
-                        maxWidth: '900px',
-                        textAlign: 'center',
-                        lineHeight: '1.8',
-                        marginBottom: '60px',
-                        opacity: 0.9
-                    }}>
-                        Join us for exciting coding competitions, workshops, and tech talks. Stay tuned for upcoming events!
-                    </p>
+                {/* Grid */}
+                {loading ? (
+                    <div className="flex justify-center py-20">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#46b94e]"></div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredEvents.length > 0 ? (
+                            filteredEvents.map((event) => (
+                                <Link
+                                    href={`/pages/events/${event.fields.slug}`}
+                                    key={event.sys.id}
+                                    className="group relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#46b94e]/50 transition-all duration-300 hover:shadow-2xl hover:shadow-green-900/20"
+                                >
+                                    <div className="aspect-video relative overflow-hidden">
+                                        <img
+                                            src={event.fields.coverImage?.fields?.file?.url ? `https:${event.fields.coverImage.fields.file.url}` : '/placeholder.jpg'}
+                                            alt={event.fields.title}
+                                            className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                                        <div className="absolute bottom-4 left-4 right-4">
+                                            <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{event.fields.title}</h3>
+                                            <div className="flex items-center gap-4 text-sm text-gray-300">
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar size={14} className="text-[#46b94e]" />
+                                                    {moment(event.fields.date).format('MMM D, YYYY')}
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Clock size={14} className="text-[#46b94e]" />
+                                                    {moment(event.fields.date).format('h:mm A')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                        gap: '30px',
-                        maxWidth: '1200px',
-                        width: '100%'
-                    }}>
-                        {['Hackathon 2024', 'Workshop Series', 'Tech Talks'].map((event, index) => (
-                            <div key={index} style={{
-                                background: 'rgba(255, 255, 255, 0.08)',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.18)',
-                                borderRadius: '20px',
-                                padding: '30px',
-                                textAlign: 'center',
-                                transition: 'transform 0.3s ease'
-                            }}>
-                                <h3 style={{ fontSize: '1.5rem', marginBottom: '15px', color: '#46b94e' }}>{event}</h3>
-                                <p style={{ opacity: 0.8 }}>Coming Soon</p>
+                                    <div className="p-6">
+                                        <div className="flex items-center gap-2 text-gray-400 mb-4 text-sm">
+                                            <MapPin size={16} className="text-[#46b94e]" />
+                                            {event.fields.venue}
+                                        </div>
+                                        <div className="flex items-center justify-between text-[#46b94e] font-medium group-hover:translate-x-2 transition-transform">
+                                            View Details
+                                            <ArrowRight size={18} />
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-20 text-gray-500">
+                                No {activeTab} events found.
                             </div>
-                        ))}
-                    </div></div>
-            </div>
-
-            {/* Copyright Footer */}
-            <div className="absolute bottom-[10px] w-full text-center z-20 text-white/60 text-xs font-sans px-4">
-                <p>&#9426; Copyrights 2026 by GFG SRMIST DELHI NCR. All Rights Reserved.</p>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
