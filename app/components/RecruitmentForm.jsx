@@ -70,18 +70,45 @@ export default function RecruitmentForm() {
                 section: data.section,
                 branch: data.branch,
                 team_preference: data.team_preference,
-                technical_skills: data.technical_skills || [],
-                design_skills: data.design_skills || [],
                 resume_link: data.resume_link,
+                techincal_skills: data.technical_skills || null,  // Note: DB column is misspelled
+                design_skills: data.design_skills || null,
                 description: data.description
             };
 
-            const { err } = await supabase.from('recruitments').insert([payload]);
-            if (err) throw err;
+            console.log('Submitting payload:', payload);
+
+            // Try insert with select to get better error information
+            const { data: insertedData, error } = await supabase
+                .from('recruitments')
+                .insert([payload])
+                .select();
+
+            if (error) {
+                console.error('Supabase error details:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code
+                });
+
+                // Provide user-friendly error messages
+                let errorMessage = 'Failed to submit application';
+                if (error.code === '42501') {
+                    errorMessage = 'Database permission error. Please contact the administrator.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+
+                throw new Error(errorMessage);
+            }
+
+            console.log('Successfully inserted data:', insertedData);
             setSubmitted(true);
         } catch (err) {
             console.error('Error Submitting:', err);
-            alert('Something went wrong. Please try again');
+            console.error('Error message:', err.message);
+            alert(`Something went wrong: ${err.message || 'Please try again'}`);
         } finally {
             setSubmitting(false);
         }
