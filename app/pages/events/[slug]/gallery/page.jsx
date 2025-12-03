@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { contentfulClient } from '@/lib/contentful';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import DomeGallery from '../../../../components/DomeGallery';
 
 export default function EventGalleryPage() {
     const { slug } = useParams();
@@ -50,38 +51,38 @@ export default function EventGalleryPage() {
         );
     }
 
-    const { title, galleryImages } = event.fields;
+    const { galleryImages } = event.fields;
+
+    // Transform Contentful images to DomeGallery format with high quality
+    const domeImages = galleryImages?.map(image => ({
+        src: `https:${image.fields.file.url}?fm=jpg&q=90&w=1920`,
+        alt: image.fields.title || 'Event Photo'
+    })) || [];
 
     return (
-        <div className="min-h-screen bg-black text-white pt-24 pb-12">
-            <div className="max-w-7xl mx-auto px-6">
-                <Link href={`/pages/events/${slug}`} className="inline-flex items-center gap-2 text-gray-400 hover:text-[#46b94e] mb-8 transition-colors">
-                    <ArrowLeft size={20} /> Back to Event Details
+        <div className="h-screen w-full bg-black relative overflow-hidden">
+            <div className="absolute top-6 left-6 z-50">
+                <Link href={`/pages/events/${slug}`} className="inline-flex items-center gap-2 text-white/80 hover:text-[#46b94e] transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-[#46b94e]/50">
+                    <ArrowLeft size={20} /> Back
                 </Link>
-
-                <h1 className="text-4xl md:text-5xl font-bold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-[#46b94e] to-emerald-400">
-                    {title} Gallery
-                </h1>
-
-                {galleryImages && galleryImages.length > 0 ? (
-                    <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-                        {galleryImages.map((image, index) => (
-                            <div key={image.sys.id} className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-white/5 border border-white/10">
-                                <img
-                                    src={`https:${image.fields.file.url}`}
-                                    alt={image.fields.title || `Gallery Image ${index + 1}`}
-                                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-20 text-gray-500 bg-white/5 rounded-2xl border border-white/10">
-                        No images available for this event.
-                    </div>
-                )}
             </div>
+
+            {domeImages.length > 0 ? (
+                <DomeGallery
+                    images={domeImages}
+                    fit={0.95}
+                    minRadius={800}
+                    maxRadius={1600}
+                    openedImageWidth="700px"
+                    openedImageHeight="700px"
+                    grayscale={true}
+                    enlargedGrayscale={false}
+                />
+            ) : (
+                <div className="h-full flex items-center justify-center text-gray-500">
+                    No images available.
+                </div>
+            )}
         </div>
     );
 }

@@ -12,8 +12,10 @@ export default function EventCard({ event }) {
     const imageDetails = coverImage?.fields?.file?.details?.image;
     const aspectRatio = imageDetails ? `${imageDetails.width}/${imageDetails.height}` : '3/4';
 
+    const isCompleted = moment(date).isBefore(moment());
+
     return (
-        <Link href={`/pages/events/${slug}`} className="block relative group w-full max-w-[400px]" style={{ flex: '1 1 300px' }}>
+        <div className="block relative group w-full max-w-[400px]" style={{ flex: '1 1 300px' }}>
             <div className="relative w-full">
                 {/* ShapeBlur Background Effect */}
                 <div className="absolute -inset-4 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl">
@@ -32,7 +34,7 @@ export default function EventCard({ event }) {
                     displayOverlayContent={false}
                 >
                     <div className="flex flex-col h-full bg-[#0a0a0a] border border-white/10 rounded-[25px] overflow-hidden">
-                        <div className="relative w-full" style={{ aspectRatio: aspectRatio }}>
+                        <Link href={`/pages/events/${slug}`} className="relative w-full block" style={{ aspectRatio: aspectRatio }}>
                             <PixelCard
                                 variant="default"
                                 gap={8}
@@ -47,10 +49,12 @@ export default function EventCard({ event }) {
                                     className="w-full h-full object-cover"
                                 />
                             </PixelCard>
-                        </div>
+                        </Link>
 
                         <div className="p-6 flex flex-col gap-4">
-                            <h3 className="text-2xl font-bold text-white font-sf-pro leading-tight">{title}</h3>
+                            <Link href={`/pages/events/${slug}`}>
+                                <h3 className="text-2xl font-bold text-white font-sf-pro leading-tight hover:text-[#46b94e] transition-colors">{title}</h3>
+                            </Link>
 
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-gray-300 font-sf-pro text-sm">
@@ -67,13 +71,24 @@ export default function EventCard({ event }) {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 text-[#46b94e] font-medium font-sf-pro text-sm group-hover:translate-x-1 transition-transform mt-auto">
-                                View Details <ArrowRight size={16} />
+                            <div className="mt-auto flex flex-col gap-3">
+                                <Link href={`/pages/events/${slug}`} className="flex items-center gap-2 text-[#46b94e] font-medium font-sf-pro text-sm group-hover:translate-x-1 transition-transform">
+                                    View Details <ArrowRight size={16} />
+                                </Link>
+
+                                {isCompleted && (
+                                    <Link
+                                        href={`/pages/events/${slug}/gallery`}
+                                        className="w-full flex items-center justify-center gap-2 bg-white/10 text-white font-bold py-2.5 rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:border-white/40 font-sf-pro text-sm"
+                                    >
+                                        View Gallery
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>
                 </TiltedCard>
             </div>
-        </Link>
+        </div>
     );
 }
