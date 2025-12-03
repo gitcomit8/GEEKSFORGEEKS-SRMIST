@@ -10,6 +10,17 @@ export default function EventGalleryPage() {
     const { slug } = useParams();
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -61,25 +72,26 @@ export default function EventGalleryPage() {
 
     return (
         <div className="h-screen w-full bg-black relative overflow-hidden">
-            <div className="absolute top-6 left-6 z-50">
-                <Link href={`/pages/events/${slug}`} className="inline-flex items-center gap-2 text-white/80 hover:text-[#46b94e] transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-[#46b94e]/50">
-                    <ArrowLeft size={20} /> Back
+            <div className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
+                <Link href={`/pages/events/${slug}`} className="inline-flex items-center gap-1.5 md:gap-2 text-white/80 hover:text-[#46b94e] transition-colors bg-black/20 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 hover:border-[#46b94e]/50 text-sm md:text-base">
+                    <ArrowLeft size={16} className="md:w-5 md:h-5" /> Back
                 </Link>
             </div>
 
             {domeImages.length > 0 ? (
                 <DomeGallery
                     images={domeImages}
-                    fit={0.95}
-                    minRadius={800}
-                    maxRadius={1600}
-                    openedImageWidth="700px"
-                    openedImageHeight="700px"
+                    fit={isMobile ? 1.1 : 0.95}
+                    fitBasis={isMobile ? "width" : "auto"}
+                    minRadius={isMobile ? 600 : 800}
+                    maxRadius={isMobile ? 1200 : 1600}
+                    openedImageWidth={isMobile ? "min(95vw, 700px)" : "700px"}
+                    openedImageHeight={isMobile ? "min(85vh, 700px)" : "700px"}
                     grayscale={true}
                     enlargedGrayscale={false}
                 />
             ) : (
-                <div className="h-full flex items-center justify-center text-gray-500">
+                <div className="h-full flex items-center justify-center text-gray-500 text-sm md:text-base px-4">
                     No images available.
                 </div>
             )}
