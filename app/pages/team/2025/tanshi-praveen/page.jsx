@@ -16,7 +16,7 @@ export default function AdrikaSarawatPage() {
         location: "SRM Institute of Science and Technology",
         email: "tanshipraveen005@gmail.com",
         linkedin: "https://www.linkedin.com/in/tanshi-praveen-a46b21328",
-        github: "https://github.com/",
+        github: "http://github.com/Tanshi-123",
 
         about: "I’m Tanshi Praveen, a 3rd-year B.Tech CSE student passionate about photography. I have hands-on experience in MERN Stack development, Data Analytics, and strong problem-solving skills with a good DSA foundation. I enjoy creating efficient, user-focused projects and continuously improving my technical expertise.",
 
