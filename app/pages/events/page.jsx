@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { contentfulClient } from '@/lib/contentful';
 import moment from 'moment';
+import GlassyNavbar from '../../components/GlassyNavbar';
 
 import Squares from '../../components/Squares';
 import LightRays from '../../components/LightRays';
@@ -78,6 +79,7 @@ export default function EventsPage() {
 
             {/* Layer 3: Content */}
             <div className="relative z-10 p-8 pt-40">
+                <GlassyNavbar />
                 <div className="max-w-7xl mx-auto">
 
 
