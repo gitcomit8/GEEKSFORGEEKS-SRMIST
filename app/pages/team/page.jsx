@@ -237,7 +237,7 @@ export default function TeamPage() {
                                 letterSpacing: "-3px",
                                 lineHeight: "1.1",
                             }}>
-                                CORE <span style={{ color: "#46b94e" }}> MEMBER</span>
+                                CORE <span style={{ color: "#46b94e" }}> MEMBERS</span>
                             </h2>
                                         <p className="text-gray-400 text-lg max-w-2xl mx-auto">
                                             Meet the talented individuals driving each department
