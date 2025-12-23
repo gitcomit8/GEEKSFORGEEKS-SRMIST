@@ -52,25 +52,28 @@ export default function PracticeClient({
     const [settingsError, setSettingsError] = useState('');
     const [settingsSuccess, setSettingsSuccess] = useState('');
 
-    // Define fetchUserProfile before useEffect
+    // Define fetchUserProfile before useEffect - with caching
     const fetchUserProfile = useCallback(async () => {
-        console.log('Fetching user profile...');
-        setIsLoadingProfile(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            console.log('User from supabase:', !!user);
             if (user) {
-                const { data: profile, error } = await supabase
-                    .from('profiles')
-                    .select('username, full_name, avatar_url, total_points, rank')
-                    .eq('id', user.id)
-                    .single();
-                
-                console.log('Profile fetched:', !!profile, 'Error:', error);
-                if (profile && !error) {
-                    setUserProfile(profile);
-                    setIsLoggedIn(true); // Ensure isLoggedIn is true when profile is set
+                // Try to get from cache first
+                const cachedProfile = sessionStorage.getItem(`profile_${user.id}`);
+                if (cachedProfile) {
+                    const parsed = JSON.parse(cachedProfile);
+                    // Check if cache is less than 30 seconds old
+                    if (Date.now() - parsed.timestamp < 30000) {
+                        setUserProfile(parsed.data);
+                        setIsLoggedIn(true);
+                        setIsLoadingProfile(false);
+                        // Fetch in background to update
+                        fetchProfileFromDB(user.id);
+                        return;
+                    }
                 }
+                
+                // Fetch from database
+                await fetchProfileFromDB(user.id);
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
@@ -79,21 +82,56 @@ export default function PracticeClient({
         }
     }, []);
 
+    const fetchProfileFromDB = async (userId) => {
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('username, full_name, avatar_url, total_points, rank')
+            .eq('id', userId)
+            .single();
+        
+        if (profile && !error) {
+            setUserProfile(profile);
+            setIsLoggedIn(true);
+            // Cache the profile
+            sessionStorage.setItem(`profile_${userId}`, JSON.stringify({
+                data: profile,
+                timestamp: Date.now()
+            }));
+        }
+    };
+
     // Fetch user profile and leaderboard on mount and set up real-time updates
     useEffect(() => {
-        // Check for existing session immediately on mount
-        const checkSession = async () => {
+        let mounted = true;
+        
+        // Immediately check session and set loading if needed
+        const initializeAuth = async () => {
             const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user && !initialUserProfile) {
-                setIsLoggedIn(true);
-                await fetchUserProfile();
+            
+            if (!mounted) return;
+            
+            if (session?.user) {
+                // User is logged in
+                if (initialUserProfile) {
+                    // Use server-provided profile immediately
+                    setUserProfile(initialUserProfile);
+                    setIsLoggedIn(true);
+                    setIsLoadingProfile(false);
+                } else {
+                    // Fetch profile
+                    setIsLoggedIn(true); // Set immediately
+                    setIsLoadingProfile(true);
+                    await fetchUserProfile();
+                }
+            } else {
+                // Not logged in
+                setIsLoggedIn(false);
+                setUserProfile(null);
+                setIsLoadingProfile(false);
             }
         };
         
-        // Only fetch if we don't have initial profile
-        if (!initialUserProfile) {
-            checkSession();
-        }
+        initializeAuth();
         fetchLeaderboard();
         
         // Set up real-time listener for leaderboard changes
@@ -115,6 +153,8 @@ export default function PracticeClient({
                 (payload) => {
                     // Update profile if it's the current user's profile
                     if (payload.new.id === userProfile?.id) {
+                        // Clear cache before fetching
+                        sessionStorage.removeItem(`profile_${payload.new.id}`);
                         fetchUserProfile();
                     }
                 }
@@ -123,12 +163,15 @@ export default function PracticeClient({
 
         // Auth state listener - faster response
         const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log('Auth event:', event, 'Session:', !!session);
+            if (!mounted) return;
             
             if (session?.user) {
                 setIsLoggedIn(true);
-                // Fetch profile immediately when user logs in
-                await fetchUserProfile();
+                // Only fetch if we don't have profile data
+                if (!userProfile) {
+                    setIsLoadingProfile(true);
+                    await fetchUserProfile();
+                }
             } else {
                 setIsLoggedIn(false);
                 setUserProfile(null);
@@ -137,11 +180,12 @@ export default function PracticeClient({
         });
 
         return () => {
+            mounted = false;
             leaderboardSubscription.unsubscribe();
             profileSubscription.unsubscribe();
             authSubscription.unsubscribe();
         };
-    }, [fetchUserProfile]);
+    }, [fetchUserProfile, initialUserProfile]);
 
     const fetchLeaderboard = async () => {
         const { data } = await supabase
@@ -160,6 +204,12 @@ export default function PracticeClient({
         setIsLoggedIn(false);
         setUserProfile(null);
         setIsLoadingProfile(false);
+        
+        // Clear cached profile
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            sessionStorage.removeItem(`profile_${user.id}`);
+        }
         
         // Then perform logout
         await supabase.auth.signOut();
