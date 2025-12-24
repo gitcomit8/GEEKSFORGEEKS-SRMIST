@@ -332,7 +332,7 @@ export default function LeaderboardClient({ leaderboard, stats, currentUserRank 
                                 </div>
                                 <p className="text-gray-400 text-sm">Total Competitors</p>
                             </div>
-                            
+
                             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105">
                                 <div className="flex items-center justify-center gap-3 mb-2">
                                     <Code className="text-purple-400" size={24} />
@@ -340,7 +340,7 @@ export default function LeaderboardClient({ leaderboard, stats, currentUserRank 
                                 </div>
                                 <p className="text-gray-400 text-sm">Total Submissions</p>
                             </div>
-                            
+
                             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105">
                                 <div className="flex items-center justify-center gap-3 mb-2">
                                     <CheckCircle className="text-green-400" size={24} />
@@ -434,23 +434,21 @@ export default function LeaderboardClient({ leaderboard, stats, currentUserRank 
                                     leaderboard.slice(3).map((user, idx) => {
                                         const actualRank = user.currentRank;
                                         const isCurrentUser = currentUserRank && user.id === currentUserRank.user_id;
-                                        
+
                                         return (
                                             <div
                                                 key={user.id || idx}
-                                                className={`flex items-center justify-between p-5 rounded-xl transition-all duration-300 border ${
-                                                    isCurrentUser 
-                                                        ? 'bg-green-500/20 border-green-500/50 shadow-lg shadow-green-500/20'
-                                                        : 'bg-white/5 hover:bg-white/10 border-white/5 hover:border-white/20'
-                                                } hover:scale-[1.02]`}
+                                                className={`flex items-center justify-between p-5 rounded-xl transition-all duration-300 border ${isCurrentUser
+                                                    ? 'bg-green-500/20 border-green-500/50 shadow-lg shadow-green-500/20'
+                                                    : 'bg-white/5 hover:bg-white/10 border-white/5 hover:border-white/20'
+                                                    } hover:scale-[1.02]`}
                                             >
                                                 <div className="flex items-center gap-4 flex-1">
                                                     {/* Rank Badge */}
-                                                    <div className={`w-12 h-12 flex items-center justify-center rounded-xl font-bold text-lg border-2 ${
-                                                        actualRank <= 10 
-                                                            ? 'bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border-yellow-500/50 text-yellow-400'
-                                                            : 'bg-white/10 text-gray-400 border-white/20'
-                                                    }`}>
+                                                    <div className={`w-12 h-12 flex items-center justify-center rounded-xl font-bold text-lg border-2 ${actualRank <= 10
+                                                        ? 'bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border-yellow-500/50 text-yellow-400'
+                                                        : 'bg-white/10 text-gray-400 border-white/20'
+                                                        }`}>
                                                         #{actualRank}
                                                     </div>
 
@@ -469,7 +467,7 @@ export default function LeaderboardClient({ leaderboard, stats, currentUserRank 
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <p className="text-sm text-gray-400">{user.displayRank || `Rank #${actualRank}`}</p>
+                                                        <p className="text-sm text-gray-400"></p>
                                                     </div>
                                                 </div>
 
