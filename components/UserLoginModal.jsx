@@ -140,7 +140,7 @@ export default function UserLoginModal({ isOpen, onClose }) {
                 <div className="relative flex items-center">
                   <input
                     type="text"
-                    placeholder="Enter first 6 letters"
+                    placeholder="Enter your email"
                     value={emailPrefix}
                     onChange={handleEmailPrefixChange}
                     required

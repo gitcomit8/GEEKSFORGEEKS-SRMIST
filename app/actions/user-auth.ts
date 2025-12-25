@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient, createAdminClient } from '@/lib/supabase-server';
+import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 
 export async function sendOtp(email: string) {
@@ -8,22 +8,7 @@ export async function sendOtp(email: string) {
         return { error: 'Email is required' };
     }
 
-    // 1. Check Whitelist (Use Admin Client)
-    const supabaseAdmin = await createAdminClient();
-
-    // Check if email is in whitelist
-    const { data: whitelistEntry, error: whitelistError } = await supabaseAdmin
-        .from('challenge_whitelist')
-        .select('email')
-        .eq('email', email)
-        .single();
-
-    if (whitelistError || !whitelistEntry) {
-        console.error("Whitelist check failed:", whitelistError);
-        return { error: 'Access Denied: You are not in the challenge whitelist. Please contact an admin.' };
-    }
-
-    // 2. If Whitelisted, send OTP
+    // Send OTP to any user
     const supabase = await createClient();
     const { error: authError } = await supabase.auth.signInWithOtp({
         email,
@@ -55,6 +40,39 @@ export async function verifyOtp(email: string, otp: string) {
 
     if (error) {
         return { error: error.message };
+    }
+
+    // After successful OTP verification, create user profile if it doesn't exist
+    if (data.user) {
+        const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', data.user.id)
+            .single();
+
+        if (!existingProfile) {
+            // Create new profile with default values
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                    {
+                        id: data.user.id,
+                        college_email: data.user.email,
+                        username: data.user.email?.split('@')[0] || 'user', // Use email prefix as default username
+                        full_name: '',
+                        avatar_url: null,
+                        total_points: 0,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                    },
+                ]);
+
+            if (profileError) {
+                console.error('Error creating profile:', profileError);
+                // Don't return error here, let the user login even if profile creation fails
+                // They can complete their profile later
+            }
+        }
     }
 
     return { success: true, session: data.session };
