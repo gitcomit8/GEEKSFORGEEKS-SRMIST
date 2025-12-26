@@ -269,9 +269,9 @@ export default function TeamPage() {
                                     }}>
                                         FACULTY <span style={{ color: "#46b94e" }}>COORDINATOR</span>
                                     </h2>
-                                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "clamp(20px, 4vw, 40px)" }}>
+                                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "clamp(20px, 4vw, 100px)" }}>
                                         {facultyCoordinators.map((member) => (
-                                            <MemberCard key={member.id} member={member} big router={router} year={selectedYear} />
+                                            <MemberCard key={member.id} member={member} big router={router} year={selectedYear} clickable={false} />
                                         ))}
                                     </div>
                                 </div>
@@ -506,12 +506,12 @@ export default function TeamPage() {
 }
 
 // Unified Card Component (Design from B, Data from A)
-function MemberCard({ member, router, big = false, year }) {
+function MemberCard({ member, router, big = false, year, clickable = true }) {
     const useBlackBackground = year === 2023 || year === 2024 || year === 2025;
     const imageSrc = member.image || "https://placehold.co/300x300/111/46b94e?text=" + member.name[0];
 
     const handleClick = () => {
-        if (year === 2025) {
+        if (clickable && year === 2025) {
             router.push(`/pages/team/2025/${member.slug}`);
         }
     };
@@ -519,7 +519,7 @@ function MemberCard({ member, router, big = false, year }) {
     return (
         <div
             onClick={handleClick}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: clickable ? "pointer" : "default" }}
         >
             <TiltedCard
                 imageSrc={imageSrc}
