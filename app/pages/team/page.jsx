@@ -245,7 +245,7 @@ export default function TeamPage() {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        padding: "140px 40px 40px",
+                        padding: "clamp(120px, 20vh, 150px) clamp(30px, 5vw, 40px) 740px",
                         color: "white",
                         minHeight: "100vh",
                     }}
@@ -259,17 +259,24 @@ export default function TeamPage() {
                             {facultyCoordinators.length > 0 && (
                                 <div>
                                     <h2 className="font-sf-pro" style={{
-                                        fontSize: "clamp(5rem, 3vw, 5.5rem)",
+                                        fontSize: "clamp(2rem, 8vw, 5.5rem)",
                                         fontWeight: "800",
                                         color: "#fff",
-                                        marginBottom: "40px",
-                                        letterSpacing: "-2px",
+                                        marginBottom: "clamp(20px, 5vw, 40px)",
+                                        letterSpacing: "clamp(-1px, -0.3vw, -2px)",
                                         lineHeight: "1.1",
                                         textAlign: "center",
+                                        padding: "0 20px",
                                     }}>
                                         FACULTY <span style={{ color: "#46b94e" }}>COORDINATOR</span>
                                     </h2>
-                                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "clamp(20px, 4vw, 100px)" }}>
+                                    <div style={{ 
+                                        display: "flex", 
+                                        flexWrap: "wrap", 
+                                        justifyContent: "center", 
+                                        gap: "clamp(20px, 4vw, 60px)",
+                                        padding: "0 clamp(10px, 3vw, 20px)"
+                                    }}>
                                         {facultyCoordinators.map((member) => (
                                             <MemberCard key={member.id} member={member} big router={router} year={selectedYear} clickable={false} />
                                         ))}
@@ -516,6 +523,8 @@ function MemberCard({ member, router, big = false, year, clickable = true }) {
         }
     };
 
+    const cardSize = big ? "clamp(280px, 80vw, 350px)" : "clamp(250px, 70vw, 300px)";
+
     return (
         <div
             onClick={handleClick}
@@ -525,10 +534,10 @@ function MemberCard({ member, router, big = false, year, clickable = true }) {
                 imageSrc={imageSrc}
                 altText={member.name}
                 captionText={member.role}
-                containerHeight="300px"
-                containerWidth="300px"
-                imageHeight="300px"
-                imageWidth="300px"
+                containerHeight={cardSize}
+                containerWidth={cardSize}
+                imageHeight={cardSize}
+                imageWidth={cardSize}
                 rotateAmplitude={12}
                 scaleOnHover={1.2}
                 showMobileWarning={false}
