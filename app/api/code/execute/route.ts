@@ -193,10 +193,18 @@ import path from 'path';
 
 const execAsync = promisify(exec);
 
-import { getLanguageConfig } from '@/lib/piston-languages';
-
 // Piston API Configuration
 const PISTON_API_URL = 'https://emkc.org/api/v2/piston/execute';
+
+const LANGUAGE_MAP: Record<string, { language: string; version: string }> = {
+    javascript: { language: 'javascript', version: '18.15.0' },
+    python: { language: 'python', version: '3.10.0' },
+    cpp: { language: 'c++', version: '10.2.0' },
+    js: { language: 'javascript', version: '18.15.0' },
+    py: { language: 'python', version: '3.10.0' },
+    'c++': { language: 'c++', version: '10.2.0' },
+    java: { language: 'java', version: '15.0.2' },
+};
 
 /**
  * Count non-empty, non-comment lines of code
@@ -243,8 +251,8 @@ async function calculateAdvancedScore(submissionData: {
 
         // Execute python script with base64 encoded input to avoid shell issues
         const command = `python ${scriptPath} --input-base64 ${base64Input}`;
-        
-        const { stdout, stderr } = await execAsync(command, { 
+
+        const { stdout, stderr } = await execAsync(command, {
             maxBuffer: 1024 * 1024,
             timeout: 5000 // 5 second timeout
         });
@@ -333,10 +341,10 @@ export async function POST(request: Request) {
             }, { status: 400 });
         }
 
-        const langConfig = getLanguageConfig(language);
+        const langConfig = LANGUAGE_MAP[language.toLowerCase()];
         if (!langConfig) {
             return NextResponse.json({
-                error: `Unsupported language: ${language}.`
+                error: `Unsupported language: ${language}. Supported languages: ${Object.keys(LANGUAGE_MAP).join(', ')}`
             }, { status: 400 });
         }
 
@@ -372,23 +380,10 @@ export async function POST(request: Request) {
 
         for (let i = 0; i < testCases.length; i++) {
             const testCase = testCases[i];
-            // Determine file name based on language for better Piston support (especially Java)
-            let fileName = 'main';
-            if (langConfig.language === 'java') fileName = 'Main.java';
-            else if (langConfig.language === 'c++') fileName = 'main.cpp';
-            else if (langConfig.language === 'c') fileName = 'main.c';
-            else if (langConfig.language === 'go') fileName = 'main.go';
-            else if (langConfig.language === 'rust') fileName = 'main.rs';
-            else if (langConfig.language === 'python') fileName = 'main.py';
-            else if (langConfig.language === 'javascript') fileName = 'main.js';
-
             const pistonPayload = {
                 language: langConfig.language,
                 version: langConfig.version,
-                files: [{
-                    name: fileName,
-                    content: code
-                }],
+                files: [{ content: code }],
                 stdin: testCase.input || "",
             };
 
@@ -449,124 +444,15 @@ export async function POST(request: Request) {
             ? Math.round(executionTimes.reduce((a, b) => a + b, 0) / executionTimes.length)
             : 0;
 
-        // 6. Calculate Advanced Score using Python grading algorithm
-        let scoreResult;
-        if (allPassed) {
-            const actualLOC = countLinesOfCode(code, language);
-
-            const submissionData = {
-                difficulty: difficulty,
-                execution_time_ms: avgRuntime,
-                code: code,
-                optimal_loc: optimalLOC,
-                expected_complexity: expectedComplexity,
-                // In production, you would analyze the actual complexity
-                // For now, we assume optimal complexity if all tests pass
-                user_complexity: expectedComplexity,
-            };
-
-            scoreResult = await calculateAdvancedScore(submissionData);
-        } else {
-            // Failed submission gets 0 points
-            const maxMarks = difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 30;
-            scoreResult = {
-                total_score: 0,
-                max_marks: maxMarks,
-                details: {
-                    execution_speed: { score: 0, max: maxMarks * 0.6 },
-                    lines_of_code: { score: 0, max: maxMarks * 0.4 }
-                }
-            };
-        }
-
-        const roundedScore = Math.round(scoreResult.total_score);
-
-        // 7. Handle submission and score update
-        if (allPassed) {
-            // Fetch previous best score BEFORE inserting current submission
-            const { data: previousScores, error: prevScoreError } = await supabase
-                .from('user_submissions')
-                .select('points_awarded')
-                .eq('user_id', user.id)
-                .eq('problem_slug', problemSlug)
-                .gt('points_awarded', 0); // ✅ FIX HERE
-
-            let previousBestScore = 0;
-
-            if (prevScoreError) {
-                console.error('Error fetching previous scores:', prevScoreError);
-            }
-
-            if (previousScores && previousScores.length > 0) {
-                previousBestScore = Math.max(
-                    ...previousScores.map(s => s.points_awarded || 0)
-                );
-            }
-
-            const pointsToAdd = Math.max(roundedScore - previousBestScore, 0);
-
-            // Update profile points ONLY if improvement exists
-            if (pointsToAdd > 0) {
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('total_points')
-                    .eq('id', user.id)
-                    .single();
-
-                if (profileError) {
-                    console.error('Error fetching profile for update:', profileError);
-                } else {
-                    const currentPoints = profile?.total_points || 0;
-                    const newTotalPoints = currentPoints + pointsToAdd;
-
-                    const { error: updateError } = await supabase
-                        .from('profiles')
-                        .update({ total_points: newTotalPoints })
-                        .eq('id', user.id);
-
-                    if (updateError) {
-                        console.error('Error updating profile points:', updateError);
-                    } else {
-                        await updateAllRankings(supabase);
-                    }
-                }
-            }
-
-            // Insert submission AFTER score calculation
-            await supabase.from('user_submissions').insert({
-                user_id: user.id,
-                problem_slug: problemSlug,
-                code: code,
-                language: language,
-                status: 'Passed',
-                runtime: avgRuntime,
-                points_awarded: roundedScore,
-            });
-
-        } else {
-            // For failed submissions, just insert the record
-            await supabase.from('user_submissions').insert({
-                user_id: user.id,
-                problem_slug: problemSlug,
-                code: code,
-                language: language,
-                status: 'Failed',
-                runtime: avgRuntime,
-                points_awarded: 0,
-            });
-        }
-
-        // 9. Return response
+        // 6. Return response WITHOUT updating database or awarding points
+        // Points are only awarded on submission via /api/code/submit
         return NextResponse.json({
             success: true,
             passed: allPassed,
             results: results,
-            points_awarded: roundedScore,
-            max_points: scoreResult.max_marks,
             runtime: avgRuntime,
-            score_breakdown: scoreResult.details,
-            message: allPassed 
-                ? `Congratulations! All ${testCases.length} test cases passed. You earned ${roundedScore} points!`
+            message: allPassed
+                ? `All ${testCases.length} test cases passed! Click Submit to save your solution and earn points.`
                 : `${results.filter(r => r.passed).length}/${testCases.length} test cases passed. Keep trying!`
         });
 

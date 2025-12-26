@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { contentfulClient } from '@/lib/contentful';
 import moment from 'moment';
 import GlassyNavbar from '../../components/GlassyNavbar';
-
 import Squares from '../../components/Squares';
 import LightRays from '../../components/LightRays';
 import EventCard from '../../components/EventCard';
@@ -13,13 +12,12 @@ export default function EventsPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('completed');
 
-
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 const response = await contentfulClient.getEntries({
                     content_type: 'event',
-                    order: 'fields.date',
+                    order: '-fields.date', // Changed to descending order for initial fetch
                 });
                 setEvents(response.items);
             } catch (error) {
@@ -34,7 +32,7 @@ export default function EventsPage() {
 
     const filterEvents = (tab) => {
         const now = moment();
-        return events.filter(event => {
+        let filtered = events.filter(event => {
             const eventDate = moment(event.fields.date);
             if (tab === 'current') {
                 return eventDate.isSame(now, 'day');
@@ -44,6 +42,12 @@ export default function EventsPage() {
                 return eventDate.isBefore(now, 'day');
             }
         });
+        if (tab === 'completed') {
+            filtered.sort((a, b) => moment(b.fields.date).diff(moment(a.fields.date)));
+        } else if (tab === 'upcoming') {
+            filtered.sort((a, b) => moment(a.fields.date).diff(moment(b.fields.date)));
+        }        
+        return filtered;
     };
 
     const filteredEvents = filterEvents(activeTab);
@@ -66,7 +70,6 @@ export default function EventsPage() {
                 <LightRays
                     raysColor="#46b94e"
                     raysOrigin="top-center"
-
                     raysSpeed={1.5}
                     lightSpread={0.8}
                     rayLength={1.2}
@@ -82,12 +85,9 @@ export default function EventsPage() {
             <div className="relative z-10 p-8 pt-40">
                 <GlassyNavbar />
                 <div className="max-w-7xl mx-auto">
-
-
                     {/* Tabs */}
                     <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-12 p-1 bg-white/5 rounded-xl w-fit max-w-full backdrop-blur-sm border border-white/10 mx-auto">
-                    {['completed', 'current', 'upcoming'].map((tab) => (
-
+                        {['completed', 'current', 'upcoming'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}

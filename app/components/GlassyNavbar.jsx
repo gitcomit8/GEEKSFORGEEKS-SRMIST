@@ -277,7 +277,7 @@ export default function GlassyNavbar() {
                             <LogOut size={18} />
                         </button>
                     ) : (
-                        <div className="relative">
+                        <div className="relative z-[1002]" ref={dropdownRef}>
                             <button
                                 onClick={() => setShowLoginOptions(!showLoginOptions)}
                                 className="flex items-center justify-center w-10 h-10 text-white bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 border border-white/10"
@@ -287,13 +287,13 @@ export default function GlassyNavbar() {
                             </button>
 
                             {showLoginOptions && (
-                                <div className="absolute top-full right-0 mt-3 w-40 py-2 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl z-[1001]">
+                                <div className="absolute top-full right-0 mt-3 w-48 py-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl z-[1003]">
                                     <button
                                         onClick={() => {
                                             setShowLoginModal(true);
                                             setShowLoginOptions(false);
                                         }}
-                                        className="w-full text-left px-4 py-3 text-xs text-white border-b border-white/5"
+                                        className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors border-b border-white/5"
                                     >
                                         User Login
                                     </button>
@@ -303,7 +303,7 @@ export default function GlassyNavbar() {
                                             setShowLoginOptions(false);
                                             setIsMobileMenuOpen(false);
                                         }}
-                                        className="w-full text-left px-4 py-3 text-xs text-white block"
+                                        className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors block"
                                     >
                                         Admin Login
                                     </Link>

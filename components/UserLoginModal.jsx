@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 
 export default function UserLoginModal({ isOpen, onClose }) {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP
-  const [email, setEmail] = useState('');
+  const [emailPrefix, setEmailPrefix] = useState(''); // Only the prefix part (before @)
+  const [email, setEmail] = useState(''); // Full email with @srmist.edu.in
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,6 +24,7 @@ export default function UserLoginModal({ isOpen, onClose }) {
     } else {
       setIsMounted(false);
       setStep(1);
+      setEmailPrefix('');
       setEmail('');
       setOtp('');
       setError('');
@@ -31,17 +33,27 @@ export default function UserLoginModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
+  // Update full email whenever prefix changes
+  useEffect(() => {
+    if (emailPrefix) {
+      setEmail(`${emailPrefix}@srmist.edu.in`);
+    } else {
+      setEmail('');
+    }
+  }, [emailPrefix]);
+
   if (!isOpen) return null;
 
   async function handleSendOtp(e) {
     e.preventDefault();
-    if (!email) return;
+    if (!emailPrefix) return;
 
     setLoading(true);
     setError('');
     setSuccess('');
 
     try {
+      // email variable already contains the full email with @srmist.edu.in
       const res = await sendOtp(email);
       if (res.error) {
         setError(res.error);
@@ -69,9 +81,7 @@ export default function UserLoginModal({ isOpen, onClose }) {
         setError(res.error);
       } else {
         setSuccess('Login successful!');
-        // Close modal
         onClose();
-        // Hard refresh the page to load user data
         window.location.href = '/practice';
       }
     } catch (err) {
@@ -86,6 +96,14 @@ export default function UserLoginModal({ isOpen, onClose }) {
     setError('');
     setSuccess('');
   }
+
+  const handleEmailPrefixChange = (e) => {
+    const value = e.target.value;
+    // Only allow letters, numbers, dots, underscores, and hyphens
+    // Limit to 6 characters
+    const filteredValue = value.replace(/[^a-zA-Z0-9._-]/g, '').slice(0, 6);
+    setEmailPrefix(filteredValue);
+  };
 
   return (
     <div
@@ -112,24 +130,38 @@ export default function UserLoginModal({ isOpen, onClose }) {
           </h2>
           <p className="subtitle">
             {step === 1
-              ? 'Enter your whitelisted college email to verify access.'
+              ? 'Enter your college id (without @srmist.edu.in)'
               : `We sent a code to ${email}. Please enter it below.`}
           </p>
 
           {step === 1 ? (
             <form onSubmit={handleSendOtp} className="auth-form">
               <div className="input-field">
-                <input
-                  type="email"
-                  placeholder="Student Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                />
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Enter your email"
+                    value={emailPrefix}
+                    onChange={handleEmailPrefixChange}
+                    required
+                    disabled={loading}
+                    maxLength={6}
+                    className="w-full"
+                  />
+                 
+                </div>
+                {emailPrefix && (
+                  <div className="mt-2 text-sm text-gray-400">
+                    Your email: <span className="text-white font-medium">{email}</span>
+                  </div>
+                )}
               </div>
               {error && <p className="error-msg">{error}</p>}
-              <button type="submit" className="btn" disabled={loading}>
+              <button 
+                type="submit" 
+                className="btn" 
+                disabled={loading || emailPrefix.length < 1}
+              >
                 {loading ? 'Sending...' : 'Send OTP'}
               </button>
             </form>
@@ -140,15 +172,20 @@ export default function UserLoginModal({ isOpen, onClose }) {
                   type="text"
                   placeholder="Enter 6-digit OTP"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e) => {
+                    // Only allow numbers and limit to 6 digits
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    setOtp(value);
+                  }}
                   required
                   disabled={loading}
+                  maxLength={6}
                 />
               </div>
               {error && <p className="error-msg">{error}</p>}
               {success && <p className="success-msg">{success}</p>}
 
-              <button type="submit" className="btn" disabled={loading}>
+              <button type="submit" className="btn" disabled={loading || otp.length !== 6}>
                 {loading ? 'Verifying...' : 'Verify & Login'}
               </button>
 
@@ -159,7 +196,7 @@ export default function UserLoginModal({ isOpen, onClose }) {
           )}
 
           <p className="note">
-            * Access is restricted to whitelisted students only.
+            * Users can update their profile information via Profile Settings after successful login.
           </p>
         </div>
       </div>
