@@ -35,6 +35,28 @@ export async function middleware(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    // Check if user is blacklisted using college_email
+    if (user && user.email) {
+        const { data: blacklisted } = await supabase
+            .from('blacklist')
+            .select('email')
+            .eq('email', user.email)
+            .maybeSingle();
+
+        if (blacklisted) {
+            // Blacklisted users are blocked from practice, leaderboard, and challenges
+            if (
+                request.nextUrl.pathname.startsWith('/practice') ||
+                request.nextUrl.pathname.startsWith('/leaderboard') ||
+                request.nextUrl.pathname.startsWith('/pages/challenges')
+            ) {
+                // Sign out the blacklisted user
+                await supabase.auth.signOut();
+                return NextResponse.redirect(new URL('/userlogin?error=blacklisted', request.url));
+            }
+        }
+    }
+
     // 1. Protect /admin routes
     if (request.nextUrl.pathname.startsWith('/admin') && !user) {
         return NextResponse.redirect(new URL('/login', request.url));

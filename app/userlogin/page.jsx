@@ -19,6 +19,12 @@ export default function UserLogin() {
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Check for blacklist error in URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'blacklisted') {
+      setError('Your account has been blocked by administrators. Please contact support for assistance.');
+    }
   }, []);
 
   async function handleSendOtp(e) {

@@ -10,6 +10,7 @@ export default function EventCard({ event }) {
     const imageUrl = coverImage?.fields?.file?.url ? `https:${coverImage.fields.file.url}` : '/placeholder.jpg';
 
     const isCompleted = moment(date).isBefore(moment());
+    const isUpcoming = moment(date).isAfter(moment());
 
     return (
         <div className="block relative group w-full" style={{ maxWidth: '380px', minWidth: '320px' }}>
@@ -73,6 +74,15 @@ export default function EventCard({ event }) {
                                 <Link href={`/pages/events/${slug}`} className="flex items-center gap-2 text-[#46b94e] font-medium font-sf-pro text-sm group-hover:translate-x-1 transition-transform">
                                     View Details <ArrowRight size={16} />
                                 </Link>
+
+                                {isUpcoming && (
+                                    <Link
+                                        href={`/pages/events/team-register?event=${encodeURIComponent(title)}&slug=${slug}`}
+                                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#46b94e] to-[#3da544] text-black font-bold py-2.5 rounded-xl hover:brightness-110 transition-all shadow-[0_0_15px_rgba(70,185,78,0.3)] font-sf-pro text-sm"
+                                    >
+                                        Register Now
+                                    </Link>
+                                )}
 
                                 {isCompleted && (
                                     <Link

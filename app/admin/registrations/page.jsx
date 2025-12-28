@@ -1,37 +1,17 @@
-import { contentfulClient } from '@/lib/contentful'
-import RecruitmentManager from './RecruitmentManager'
-import { fetchRecruitments } from './actions'
+import { fetchRegistrations } from './actions'
+import RegistrationsManager from './RegistrationsManager'
 
-// Disable caching so data is always fresh
 export const dynamic = 'force-dynamic'
 
-async function getRecruitmentStatus() {
-    try {
-        const entries = await contentfulClient.getEntries({
-            content_type: 'globalSettings',
-            limit: 1
-        })
-
-        if (entries.items.length > 0) {
-            return entries.items[0].fields.isRecruitmentOpen || false
-        }
-        return false
-    } catch (error) {
-        console.error('Error fetching global settings:', error)
-        return false
-    }
-}
-
-export default async function RecruitmentPage() {
-    const isRecruitmentOpen = await getRecruitmentStatus()
-    const initialData = await fetchRecruitments()
+export default async function RegistrationsPage() {
+    const initialData = await fetchRegistrations()
 
     return (
         <div className="min-h-screen bg-black text-white relative overflow-hidden">
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-20 z-0 pointer-events-none" />
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-600/10 rounded-full blur-[128px] pointer-events-none animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[128px] pointer-events-none animate-pulse" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-600/10 rounded-full blur-[128px] pointer-events-none animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[128px] pointer-events-none animate-pulse" />
 
             <div className="relative z-10 p-4 md:p-8">
                 <div className="max-w-7xl mx-auto space-y-8">
@@ -39,13 +19,13 @@ export default async function RecruitmentPage() {
                     <div className="backdrop-blur-xl bg-gradient-to-r from-white/10 via-white/5 to-white/10 border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8">
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div className="flex-1">
-                                <div className="inline-block px-4 py-1.5 bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/30 rounded-full mb-4">
-                                    <p className="text-xs font-semibold text-green-300 uppercase tracking-wider">Recruitment Hub</p>
+                                <div className="inline-block px-4 py-1.5 bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 rounded-full mb-4">
+                                    <p className="text-xs font-semibold text-orange-300 uppercase tracking-wider">Event Management</p>
                                 </div>
                                 <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60 mb-2">
-                                    Recruitment Portal
+                                    Team Registrations
                                 </h1>
-                                <p className="text-white/50 text-sm md:text-base">Manage recruitment applications and team preferences</p>
+                                <p className="text-white/50 text-sm md:text-base">View and manage event team submissions</p>
                             </div>
                             <a
                                 href="/admin"
@@ -59,11 +39,8 @@ export default async function RecruitmentPage() {
                         </div>
                     </div>
 
-                    {/* Recruitment Manager */}
-                    <RecruitmentManager
-                        initialRecruitmentStatus={isRecruitmentOpen}
-                        initialData={initialData}
-                    />
+                    {/* Registrations Manager */}
+                    <RegistrationsManager initialData={initialData} />
                 </div>
             </div>
         </div>

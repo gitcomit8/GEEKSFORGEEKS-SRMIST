@@ -42,6 +42,13 @@ async function getFullLeaderboard() {
     try {
         const supabase = await createClient();
 
+        // Fetch blacklisted emails
+        const { data: blacklistData } = await supabase
+            .from('blacklist')
+            .select('email');
+
+        const blacklistedEmails = new Set((blacklistData || []).map(b => b.email));
+
         // Fetch all users ordered by total points (descending)
         const { data, error } = await supabase
             .from('profiles')
@@ -54,8 +61,11 @@ async function getFullLeaderboard() {
             return [];
         }
 
-        // Add dynamic ranking based on current position
-        const rankedData = (data || []).map((user, index) => ({
+        // Filter out blacklisted users
+        const filteredData = (data || []).filter(user => !blacklistedEmails.has(user.college_email || user.email));
+
+        // Add dynamic ranking based on current position (after filtering)
+        const rankedData = filteredData.map((user, index) => ({
             ...user,
             currentRank: index + 1, // Real-time calculated rank
             displayRank: user.rank || `#${index + 1}`, // Use stored rank or fallback
