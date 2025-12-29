@@ -3,17 +3,20 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { X, Megaphone, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function RecruitmentNotification({ isRecruitmentOpen }) {
     const [stage, setStage] = useState('hidden');
+    const pathname = usePathname();
 
     useEffect(() => {
         if (isRecruitmentOpen) {
             const hasSeenIntro = sessionStorage.getItem('hasSeenRecruitmentIntro');
+            const isHomePage = pathname === '/';
 
-            if (hasSeenIntro) {
+            if (hasSeenIntro || !isHomePage) {
                 setStage('collapsed');
-            } else {
+            } else if (isHomePage) {
                 setStage('intro');
                 sessionStorage.setItem('hasSeenRecruitmentIntro', 'true');
 
@@ -24,9 +27,10 @@ export default function RecruitmentNotification({ isRecruitmentOpen }) {
                 return () => clearTimeout(timer);
             }
         }
-    }, [isRecruitmentOpen]);
+    }, [isRecruitmentOpen, pathname]);
 
-    if (!isRecruitmentOpen || stage === 'hidden') return null;
+    const isHomePage = pathname === '/';
+    if (!isRecruitmentOpen || stage === 'hidden' || !isHomePage) return null;
 
     return (
         <AnimatePresence mode="wait">

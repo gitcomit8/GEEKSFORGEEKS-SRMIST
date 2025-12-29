@@ -6,30 +6,11 @@ import LogoLoop from './components/LogoLoop';
 import { SiInstagram, SiGithub, SiLinkedin, SiDiscord, SiX } from 'react-icons/si';
 
 import DecryptedText from './components/DecryptedText';
-import RecruitmentNotification from './components/RecruitmentNotification';
 import { contentfulClient } from '@/lib/contentful';
 
 export const revalidate = 60; // Revalidate every minute
 
-async function getRecruitmentStatus() {
-  try {
-    const entries = await contentfulClient.getEntries({
-      content_type: 'globalSettings',
-      limit: 1
-    });
-
-    if (entries.items.length > 0) {
-      return entries.items[0].fields.isRecruitmentOpen || false;
-    }
-    return false;
-  } catch (error) {
-    console.error('Error fetching global settings:', error);
-    return false;
-  }
-}
-
 export default async function Home() {
-  const isRecruitmentOpen = await getRecruitmentStatus();
 
   const socialLogos = [
     { node: <SiInstagram color="#ffffff" />, title: "Instagram", href: "https://www.instagram.com/gfg_srmist_ncr" },
@@ -49,8 +30,6 @@ export default async function Home() {
     <div className="relative w-full h-screen overflow-hidden">
       {/* Glassy Navbar */}
       <GlassyNavbar />
-
-      <RecruitmentNotification isRecruitmentOpen={isRecruitmentOpen} />
 
       {/* GridScan Background */}
       <GridScan

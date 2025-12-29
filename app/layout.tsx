@@ -32,16 +32,39 @@ export const viewport = {
   userScalable: true,
 };
 
-export default function RootLayout({
+import { contentfulClient } from '@/lib/contentful';
+import RecruitmentNotification from './components/RecruitmentNotification';
+
+async function getRecruitmentStatus() {
+  try {
+    const entries = await contentfulClient.getEntries({
+      content_type: 'globalSettings',
+      limit: 1
+    });
+
+    if (entries.items.length > 0) {
+      return entries.items[0].fields.isRecruitmentOpen || false;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error fetching global settings:', error);
+    return false;
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isRecruitmentOpen = await getRecruitmentStatus();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${robotoSlab.variable} font-sf-pro antialiased`}
       >
+        <RecruitmentNotification isRecruitmentOpen={isRecruitmentOpen} />
         {children}
       </body>
     </html>
